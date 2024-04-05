@@ -1,14 +1,21 @@
 {
   "name": "frontend",
+  "homepage": "http://buingocthanh239.github.io/test-split-word",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "@mui/material": "^5.15.15",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "@xmldom/xmldom": "^0.8.10",
-    "axios": "^1.4.0",
+    "axios": "^1.6.8",
     "bootstrap": "^5.2.3",
+    "cloudinary": "^2.1.0",
+    "file-saver": "^2.0.5",
+    "gh-pages": "^6.1.1",
     "jszip": "^3.10.1",
     "pizzip": "^3.1.6",
     "react": "^18.2.0",
@@ -20,7 +27,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
