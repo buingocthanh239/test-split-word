@@ -19,6 +19,7 @@ export const IMAGE = 9;
 
 export const answerTypes = [BOLD_TEXT, BOLD_ITALIC_TEXT, BOLD_UNDERLINE_TEXT, BOLD_HIGHLIGHT_TEXT, BOLD_ITALIC_UNDERLINE_TEXT];
 export const mediaTypes = [IMAGE]
+export const correctAnswerTypes = [BOLD_HIGHLIGHT_TEXT, BOLD_UNDERLINE_TEXT, HIGHLIGHT_TEXT, UNDERLINE_TEXT]
 
 // tạo dom xml
 export function str2xml(str) {
@@ -31,15 +32,15 @@ export function str2xml(str) {
 
 // phan loai text
 export function getTypeText(style) {
-    const { isBold, isHightLine, isUnderline, isItalic } = style
-    if (isBold && isItalic && isUnderline) return 7;
+    const { isBold, isHighLight, isUnderline, isItalic } = style
+    if (isBold && isHighLight) return 7;
     if (isBold && isItalic && isUnderline) return 8;
     if (isBold && isItalic) return 5;
     if (isBold && isUnderline) return 6;
     if (isBold) return 1;
     if (isItalic) return 2;
     if (isUnderline) return 3;
-    if (isHightLine) return 4;
+    if (isHighLight) return 4;
     return NORMAL_TEXT
 }
 
@@ -56,10 +57,10 @@ export async function getComponentInParagraph(paragraphsElement, zip, relationSh
             if (textValue) {
                 const styleXml = (runNode.getElementsByTagName('w:rPr') ?? [])[0];
                 const isBold = (styleXml?.getElementsByTagName('w:b') ?? []).length;
-                const isHighlight = (styleXml?.getElementsByTagName('w:highlight') ?? []).length;
+                const isHighLight = (styleXml?.getElementsByTagName('w:highlight') ?? []).length;
                 const isUnderline = (styleXml?.getElementsByTagName('w:u') ?? []).length;
                 const isItalic = (styleXml?.getElementsByTagName('w:i') ?? []).length;
-                const textType = getTypeText({ isBold, isHighlight, isUnderline, isItalic });
+                const textType = getTypeText({ isBold, isHighLight, isUnderline, isItalic });
                 paragraph.push({
                     content: textValue,
                     type: textType
@@ -227,7 +228,7 @@ export function convertTableToHTML(table) {
 }
 
 export function convertQuestionToHTML(_question) {
-    const { question, answers, solution, child } = _question;
+    const { question, answers, solution, child, correctAnswer } = _question;
     let htmlQuestion = '';
     let htmlAnswers = [];
     let htmlSolution = '';
@@ -259,10 +260,13 @@ export function convertQuestionToHTML(_question) {
     if (answers) {
         htmlAnswers = answers.map(item => {
             let htmlPara = ''
-            item.forEach(subPara => {
+            item.value.forEach(subPara => {
                 htmlPara += convertContentToHtml(subPara);
             })
-            return `<p>${htmlPara}</p>`
+            return {
+                key: item.key,
+                value: `<p>${htmlPara}</p>`
+            }
         })
     }
 
@@ -274,6 +278,42 @@ export function convertQuestionToHTML(_question) {
         question: htmlQuestion,
         answers: htmlAnswers,
         solution: htmlSolution,
-        child: htmlChild.length ? htmlChild : null
+        child: htmlChild.length ? htmlChild : null,
+        correctAnswer
     }
+}
+
+export function detectCorrectAnswerInChoiceQuestion(questions) {
+    return questions.map(question => {
+        if (question?.answers?.length || question?.child?.length) {
+            const { answers, child, ...remain } = question
+            const newChild = child?.length ? detectCorrectAnswerInChoiceQuestion(child) : child
+            let correctAnswer = ''
+            if (answers?.length) {
+                const newAnswers = answers.map((answer, index) => {
+                    const newAnswer = {
+                        key: index,
+                        value: answer,
+                    }
+                    if (correctAnswerTypes.includes(answer[0]?.type)) {
+                        correctAnswer += !!correctAnswer ? `-${index}` : index
+                    }
+                    return newAnswer
+                })
+                return {
+                    ...remain,
+                    answers: newAnswers,
+                    correctAnswer: !!correctAnswer ? correctAnswer : null,
+                    child: newChild
+                }
+            }
+            return {
+                ...remain,
+                answers: [],
+                correctAnswer: !!correctAnswer ? correctAnswer : null,
+                child: newChild
+            }
+        }
+        return question
+    })
 }

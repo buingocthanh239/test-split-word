@@ -5,7 +5,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import PizZip from "pizzip";
-import { ANSWER_KEY, BOLD_ITALIC_TEXT, splitParagraphs, str2xml, convertQuestionToHTML, answerTypes } from "./utils";
+import { ANSWER_KEY, BOLD_ITALIC_TEXT, splitParagraphs, str2xml, convertQuestionToHTML, answerTypes, detectCorrectAnswerInChoiceQuestion } from "./utils";
 import { splitQuestionTOEIC } from "./toeicExam";
 import { splitQuestionIELTS } from "./ieltsExam";
 import { splitQuestionsEnglishTHPT } from "./englishTHPT";
@@ -39,8 +39,9 @@ const DocxReader = () => {
             const relationShipElements = relationshipsXml.getElementsByTagName("Relationship");
             const paragraphs = await splitParagraphs(xml, zip, relationShipElements);
             const questions = (handleSplitQuestions(type))(paragraphs);
-            const questionHtml = questions.map(question => convertQuestionToHTML(question));
-            console.log(questions)
+            const newQuestions = detectCorrectAnswerInChoiceQuestion(questions)
+            const questionHtml = newQuestions.map(question => convertQuestionToHTML(question));
+            // console.log(questionHtml)
             setHtmlQuestions(questionHtml);
         };
 
@@ -50,22 +51,29 @@ const DocxReader = () => {
     };
 
     // render
-    const render = (htmlQuestion, i) => (
-        <div key={i}>
-            <div dangerouslySetInnerHTML={
-                { __html: htmlQuestion.question }
-            } />
-            {!!htmlQuestion?.answers?.length && htmlQuestion.answers.map((answer, indx) => (
-                <div key={indx} dangerouslySetInnerHTML={
-                    { __html: answer }
-                } />
-            ))}
-            {!!htmlQuestion?.child?.length && htmlQuestion?.child?.map(child => render(child))}
-            {!!htmlQuestion.solution?.length && <div dangerouslySetInnerHTML={
-                { __html: htmlQuestion.solution }
-            }></div>}
-        </div>
-    )
+    const render = (htmlQuestion, i) => {
+        const correctAnswer = htmlQuestion.correctAnswer;
+        const correctChoice = htmlQuestion.answers?.length ? correctAnswer.split('-') : [];
+        return (
+            <>
+                {/* <div style={{ fontWeight: 'bold' }}>Câu {i + 1}:</div> */}
+                <div key={i} style={{ border: "4px ridge", padding: '0 10px', margin: '6px 0' }}>
+                    <div dangerouslySetInnerHTML={
+                        { __html: htmlQuestion.question }
+                    } />
+                    {!!htmlQuestion?.answers?.length && htmlQuestion.answers.map((answer, indx) => (
+                        <div key={indx} style={{ border: `1px dotted blue`, margin: '6px 0', backgroundColor: correctChoice.includes(answer.key.toString()) ? 'yellow' : null }} dangerouslySetInnerHTML={
+                            { __html: answer.value }
+                        } />
+                    ))}
+                    {!!htmlQuestion?.child?.length && htmlQuestion?.child?.map((child, index) => render(child, index))}
+                    {!!htmlQuestion.solution?.length && <div style={{ border: '4px inset', margin: '6px 0' }} dangerouslySetInnerHTML={
+                        { __html: htmlQuestion.solution }
+                    }></div>}
+                </div>
+            </>
+        )
+    }
 
 
 

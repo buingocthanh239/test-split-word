@@ -32,7 +32,7 @@ export function handleDetectAnswersInQuestion(paragraph) {
         if (ANSWER_KEY.some(key => content.includes(key)) && answerTypes.includes(type)) {
             startAnswers = true;
             if (answer.length) answers.push(answer);
-            answer = [];
+            answer = [component[i]];
             continue;
         }
         if (startAnswers) {
@@ -54,7 +54,7 @@ export function handleDetectAnswerInAnswers(paragraph) {
         const { content, type } = component[i];
         if (ANSWER_KEY.some(key => content.includes(key)) && answerTypes.includes(type)) {
             if (answer.length) answers.push(answer);
-            answer = [];
+            answer = [component[i]];
             continue;
         }
         answer.push(component[i])
