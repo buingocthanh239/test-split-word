@@ -40,6 +40,7 @@ const DocxReader = () => {
             const paragraphs = await splitParagraphs(xml, zip, relationShipElements);
             const questions = (handleSplitQuestions(type))(paragraphs);
             const newQuestions = detectCorrectAnswerInChoiceQuestion(questions)
+            console.log(newQuestions)
             const questionHtml = newQuestions.map(question => convertQuestionToHTML(question));
             // console.log(questionHtml)
             setHtmlQuestions(questionHtml);
@@ -51,22 +52,23 @@ const DocxReader = () => {
     };
 
     // render
-    const render = (htmlQuestion, i) => {
+    const render = (htmlQuestion, i, indexParent) => {
         const correctAnswer = htmlQuestion.correctAnswer;
-        const correctChoice = htmlQuestion.answers?.length ? correctAnswer.split('-') : [];
+        const correctChoice = htmlQuestion.answers?.length ? (correctAnswer?.split('-') ?? []) : [];
+        const indexQuestion = indexParent ? `${indexParent}.${i + 1}` : (i + 1)
         return (
             <>
-                {/* <div style={{ fontWeight: 'bold' }}>Câu {i + 1}:</div> */}
+                <div style={{ fontWeight: 'bold', color: 'blue' }}>Câu {indexQuestion}:</div>
                 <div key={i} style={{ border: "4px ridge", padding: '0 10px', margin: '6px 0' }}>
                     <div dangerouslySetInnerHTML={
                         { __html: htmlQuestion.question }
                     } />
                     {!!htmlQuestion?.answers?.length && htmlQuestion.answers.map((answer, indx) => (
-                        <div key={indx} style={{ border: `1px dotted blue`, margin: '6px 0', backgroundColor: correctChoice.includes(answer.key.toString()) ? 'yellow' : null }} dangerouslySetInnerHTML={
+                        <div key={indx} style={{ border: `1px dotted blue`, margin: '6px 0', backgroundColor: correctChoice?.includes(answer.key.toString()) ? 'yellow' : null }} dangerouslySetInnerHTML={
                             { __html: answer.value }
                         } />
                     ))}
-                    {!!htmlQuestion?.child?.length && htmlQuestion?.child?.map((child, index) => render(child, index))}
+                    {!!htmlQuestion?.child?.length && htmlQuestion?.child?.map((child, index) => render(child, index, indexQuestion))}
                     {!!htmlQuestion.solution?.length && <div style={{ border: '4px inset', margin: '6px 0' }} dangerouslySetInnerHTML={
                         { __html: htmlQuestion.solution }
                     }></div>}

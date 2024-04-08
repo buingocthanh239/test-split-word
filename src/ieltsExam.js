@@ -189,11 +189,13 @@ export function splitQuestionIELTS(paragraphs) {
 
                 // push du lieu
                 if (parentQuestion.length) {
-                    child.push({
-                        question: question,
-                        answers: answers.length ? answers : null,
-                        solution: solution.length ? solution : null
-                    })
+                    if (question.length) {
+                        child.push({
+                            question: question,
+                            answers: answers.length ? answers : null,
+                            solution: solution.length ? solution : null
+                        })
+                    }
                     questions.push({
                         question: parentQuestion,
                         child: child,
