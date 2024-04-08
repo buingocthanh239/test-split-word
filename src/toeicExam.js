@@ -1,3 +1,5 @@
+import { BOLD_TEXT, NORMAL_TEXT } from "./utils"
+
 const PART_PATTERN = /^PART\s[1-7]/
 const PARENT_PATTERN = /^[qQ]uestions?\s((1?\d{1,2}|200)\-(1?\d{1,2}|200))/
 const QUESTION_PATTERN = /^[1-9]\d*\./
@@ -111,8 +113,8 @@ export function splitQuestionTOEIC(paragraphs) {
                 if (question.length) {
                     child.push({
                         question: question,
-                        answers: answers,
-                        solution: solution
+                        answers: answers.length ? answers : null,
+                        solution: solution.length ? solution : null
                     })
                 }
 
@@ -297,8 +299,38 @@ export function splitQuestionTOEIC(paragraphs) {
         }
     }
 
-    return parts
+    // format toiec answer;
+    function addAnswerInToiecQuestion(questions) {
+        return questions.map(question => {
+            const { answers, child, ...remain } = question
+            if (child && child?.length) {
+                const newChild = addAnswerInToiecQuestion(child);
+                return {
+                    ...remain,
+                    child: newChild
+                }
+            }
+            // truong hop k có child thi no phai la cau hoi.
+            if (!answers && !answers?.length) {
+                const answers = [];
+                answers.push([{ content: '(A)', type: NORMAL_TEXT }])
+                answers.push([{ content: '(B)', type: NORMAL_TEXT }])
+                answers.push([{ content: '(C)', type: NORMAL_TEXT }])
+                answers.push([{ content: '(D)', type: NORMAL_TEXT }])
+                return {
+                    ...remain,
+                    answers: answers
+                }
+            }
+            return question
+        })
+    }
 
+    const formatQuestion = addAnswerInToiecQuestion(parts)
+    console.log(formatQuestion)
+    return formatQuestion
 }
+
+
 
 

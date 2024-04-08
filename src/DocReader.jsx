@@ -40,7 +40,7 @@ const DocxReader = () => {
             const paragraphs = await splitParagraphs(xml, zip, relationShipElements);
             const questions = (handleSplitQuestions(type))(paragraphs);
             const newQuestions = detectCorrectAnswerInChoiceQuestion(questions)
-            console.log(newQuestions)
+            // console.log(newQuestions)
             const questionHtml = newQuestions.map(question => convertQuestionToHTML(question));
             // console.log(questionHtml)
             setHtmlQuestions(questionHtml);
