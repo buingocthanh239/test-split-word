@@ -170,11 +170,11 @@ export function splitQuestionsEnglishTHPT(paragraphs) {
                 startAnswer = false;
                 startSolution = true;
 
-                solution.push({ table: table });
+                solution.push([{ table: table }]);
                 continue;
             }
             if (columns === 2) {
-                parentSolution.push({ table: table })
+                parentSolution.push([{ table: table }])
                 continue;
             }
             continue;
