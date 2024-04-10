@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/test-split-word/static/css/main.74acce42.css",
-    "main.js": "/test-split-word/static/js/main.e203c22b.js",
+    "main.js": "/test-split-word/static/js/main.cbd97b2c.js",
     "static/js/787.cda612ba.chunk.js": "/test-split-word/static/js/787.cda612ba.chunk.js",
     "index.html": "/test-split-word/index.html",
     "main.74acce42.css.map": "/test-split-word/static/css/main.74acce42.css.map",
-    "main.e203c22b.js.map": "/test-split-word/static/js/main.e203c22b.js.map",
+    "main.cbd97b2c.js.map": "/test-split-word/static/js/main.cbd97b2c.js.map",
     "787.cda612ba.chunk.js.map": "/test-split-word/static/js/787.cda612ba.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.74acce42.css",
-    "static/js/main.e203c22b.js"
+    "static/js/main.cbd97b2c.js"
   ]
 }
