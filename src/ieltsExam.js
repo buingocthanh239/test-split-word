@@ -10,7 +10,7 @@ const QUESTION_PATTERN = /^[1-9]\d*\./
 const ANSWER_PATTERN = /^[A-Z]\.\s/
 const ANSWER_IN_QUESTION = /[ABCD]\.\s/g
 const SOLUTION_PATTERN = /^Giải\sThích/i
-const CORRECT_PATTERN = /^[1-9]\d*\./g
+const CORRECT_PATTERN = /^[1-9]\d*\./
 
 const PART_PATTERNS = [PART_SPEAKING_PATTERN, PART_WRITING_PATTERN, PART_LISTENING_PATTERN, PART_READING_PATTERN]
 const CORRECT_ANSWER_TYPE = [BOLD_HIGHLIGHT_TEXT, HIGHLIGHT_TEXT]
@@ -397,14 +397,15 @@ export function splitQuestionIELTS(paragraphs) {
             const newChildrenOfChild = [];
             _child.forEach(c => {
                 const { answers, question, ...remainChildOfChild } = c;
+                const __question = c.question;
                 if (answers && answers.length) {
                     return newChildrenOfChild.push(c);
                 }
-                if (!detectCorrectAnswerInFillQuestion(question)) {
+                if (!detectCorrectAnswerInFillQuestion(__question)) {
                     question.forEach(para => _question.push(para));
                 } else {
                     // gop thanh 1 đoạn.
-                    const text = question.reduce((paraText, para) => {
+                    const text = __question.reduce((paraText, para) => {
                         return paraText + ' ' + para.reduce((text, item) => text + item.content, '');
                     }, '');
                     const correctAnswer = text.trim().split(CORRECT_PATTERN)[1];
