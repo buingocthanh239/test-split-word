@@ -72,23 +72,20 @@ export async function getComponentInParagraph(paragraphsElement, zip, relationSh
         // run la object. ở đây sẽ được xử lí bằng nhiều loại.
 
         // xử lí up load png trc. công thức toán học xủ lí sau.
-        // const objectComponent = runNode.getElementsByTagName('a:blip');
-        const objectComponent = runNode.getElementsByTagName('v:imagedata');
+        const objectComponent = runNode.getElementsByTagName('a:blip');
         if (objectComponent?.length) {
-            // const id = objectComponent[0].getAttribute('r:embed');
-            const id = objectComponent[0].getAttribute('r:id');
+            const id = objectComponent[0].getAttribute('r:embed');
             const relationshipElement = relationShipElements?.filter(item => item.getAttribute("Id") === id)[0];
             const target = relationshipElement.getAttribute('Target');
-            // const imageData = zip.files[`word/${target}`].asArrayBuffer()
-            console.log(target)
-            // const blod = new Blob([imageData])
-            // await upLoadImage(blod)
-            //     .then(data => paragraph.push({
-            //         content: '',
-            //         type: IMAGE,
-            //         src: data
-            //     }))
-            //     .catch(e => console.log(e))
+            const imageData = zip.files[`word/${target}`].asArrayBuffer()
+            const blod = new Blob([imageData])
+            await upLoadImage(blod)
+                .then(data => paragraph.push({
+                    content: '',
+                    type: IMAGE,
+                    src: data
+                }))
+                .catch(e => console.log(e))
             continue;
         }
 
