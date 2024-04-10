@@ -209,7 +209,7 @@ export function convertContentToHtml(subPara) {
 
 export function convertTableToHTML(table) {
     let htmlTable = ''
-    table.forEach(row => {
+    table?.forEach(row => {
         let htmlRow = '';
         row.forEach(data => {
             let htmlData = '';
@@ -247,14 +247,18 @@ export function convertQuestionToHTML(_question) {
         })
     }
     if (solution) {
-        // solution.forEach(paragraph => {
-        //     let htmlPara = ''
-        //     paragraph.forEach(subParagraph => {
-        //         htmlPara += convertContentToHtml(subParagraph)
-        //     })
-        //     htmlSolution += `<p>${htmlPara}</p>`
-        // })
-        if (solution[0]) htmlSolution = convertTableToHTML(solution[0].table)
+        solution.forEach(paragraph => {
+            let htmlPara = ''
+            paragraph?.forEach(subParagraph => {
+                if (subParagraph.table) {
+                    htmlPara += convertTableToHTML(subParagraph.table)
+                } else {
+                    htmlPara += convertContentToHtml(subParagraph)
+                }
+            })
+            htmlSolution += `<p>${htmlPara}</p>`
+        })
+        // if (solution[0]) htmlSolution = convertTableToHTML(solution[0].table)
     }
 
     if (answers) {

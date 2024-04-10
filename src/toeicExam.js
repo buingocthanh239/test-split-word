@@ -1,10 +1,11 @@
 import { BOLD_TEXT, NORMAL_TEXT } from "./utils"
 
 const PART_PATTERN = /^PART\s[1-7]/
-const PARENT_PATTERN = /^[qQ]uestions?\s((1?\d{1,2}|200)\-(1?\d{1,2}|200))/
+const PARENT_PATTERN = /^([qQ]uestions?\s((1?\d{1,2}|200)\-(1?\d{1,2}|200))|[1-9]\d*\.\sCâu\shỏi\scha)/
 const QUESTION_PATTERN = /^[1-9]\d*\./
-const ANSWER_PATTERN = /^\([ABCD]\)\s/
+const ANSWER_PATTERN = /^\([ABCD]\)/
 const ANSWER_IN_QUESTION = /\([ABCD]\)\s/g
+const SOLUTION_PATTERN = /^(HƯỚNG\sDẪN\sGIẢI|GIẢI\sTHÍCH)/i
 
 export function detectPart(text) {
     return PART_PATTERN.test(text ?? '')
@@ -23,11 +24,11 @@ export function detectAnswer(text) {
 }
 
 export function detectSolution(text) {
-    return false;
+    return SOLUTION_PATTERN.test(text ?? '');
 }
 
 export function detectParentSolution(text) {
-    return false;
+    return SOLUTION_PATTERN.test(text ?? '');
 }
 
 export function handleDetectAnswerInQuestion(paragraph) {
@@ -166,15 +167,14 @@ export function splitQuestionTOEIC(paragraphs) {
                         child: child,
                         solution: parentSolution
                     })
-
-                    // reset
-                    parentQuestion = [paragraph.component];
-                    question = [];
-                    parentSolution = [];
-                    child = [];
-
-                    return;
                 }
+                // reset
+                parentQuestion = [paragraph.component];
+                question = [];
+                parentSolution = [];
+                child = [];
+                return;
+
             }
 
             // nhan dang question
@@ -205,7 +205,7 @@ export function splitQuestionTOEIC(paragraphs) {
                 return;
             }
 
-            if (detectAnswer(paragraph.text)) {
+            if (detectAnswer(paragraph.text) && (startQuestion || startAnswer)) {
                 // reset 
                 startParentQuestion = false;
                 startPart = false;
@@ -218,7 +218,7 @@ export function splitQuestionTOEIC(paragraphs) {
                 return;
             }
 
-            if (detectSolution(paragraph.text)) {
+            if (detectSolution(paragraph.text) && (startSolution || startAnswer || startQuestion)) {
                 // reset 
                 startParentQuestion = false;
                 startPart = false;
@@ -250,9 +250,9 @@ export function splitQuestionTOEIC(paragraphs) {
         // xet truong hop khong phai la bang.
         if (!_paragraph.table) {
             handleParagraph(_paragraph)
-        } else { // truong hop la bang
+        } else { // truong hop la bang // xu lí phần câu hỏi đáp án ở trong bảng.
             const rows = _paragraph.table.length;
-            if (rows > 1) {
+            if (rows > 1 || _paragraph.table[0].length > 1) {
                 handlePushRemainParagraph([{
                     table: _paragraph.table
                 }])
@@ -327,7 +327,6 @@ export function splitQuestionTOEIC(paragraphs) {
     }
 
     const formatQuestion = addAnswerInToiecQuestion(parts)
-    console.log(formatQuestion)
     return formatQuestion
 }
 

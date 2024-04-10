@@ -1,4 +1,4 @@
-import { ANSWER_KEY, BOLD_ITALIC_TEXT, splitParagraphs, str2xml, convertQuestionToHTML, answerTypes } from "./utils";
+import { ANSWER_KEY, BOLD_ITALIC_TEXT, answerTypes } from "./utils";
 
 export function detectParentQuestion(paragraph) {
     if (paragraph.component?.length === 1 && paragraph.component[0]?.type === BOLD_ITALIC_TEXT) {

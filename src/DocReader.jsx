@@ -69,9 +69,15 @@ const DocxReader = () => {
                         } />
                     ))}
                     {!!htmlQuestion?.child?.length && htmlQuestion?.child?.map((child, index) => render(child, index, indexQuestion))}
-                    {!!htmlQuestion.solution?.length && <div style={{ border: '4px inset', margin: '6px 0' }} dangerouslySetInnerHTML={
+                    {!!htmlQuestion.solution?.length && <div style={{ border: '4px inset', margin: '6px 0', backgroundColor: htmlQuestion?.child?.length ? 'grey' : 'white' }} dangerouslySetInnerHTML={
                         { __html: htmlQuestion.solution }
                     }></div>}
+                    {!htmlQuestion.answers?.length && htmlQuestion.correctAnswer && <div>
+                        <span style={{ fontWeight: 'bold' }}>Đáp án</span>
+                        <div style={{ border: '4px ridge', margin: '6px 0', backgroundColor: 'yellow' }} dangerouslySetInnerHTML={
+                            { __html: htmlQuestion.correctAnswer }
+                        }></div>
+                    </div>}
                 </div>
             </>
         )
