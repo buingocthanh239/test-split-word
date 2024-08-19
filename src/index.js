@@ -6,11 +6,12 @@ import reportWebVitals from './reportWebVitals';
 import UserApp from './UserApp';
 import ContextTest from './ContextTest';
 import DocxReader from './DocReader';
+import TestPromtGpt from './test-prompt-gpt';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <DocxReader />
+    <TestPromtGpt />
   </React.StrictMode>
 );
 
